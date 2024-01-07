@@ -5,7 +5,7 @@ use crate::message::Message;
 #[derive(PartialEq, Debug)]
 pub struct Room {
   name: String,
-  pub messages: Vec<Message>,
+  messages: Vec<Message>,
 }
 
 impl Room {
