@@ -1,0 +1,6 @@
+if [ "$1" = "dev" ]; then
+  cargo watch -x "run -p chat_web"
+else
+  echo "unknown command. available command:
+  ./chatrs dev"
+fi

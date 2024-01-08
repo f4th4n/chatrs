@@ -14,7 +14,7 @@ Start CLI mode:
 cargo run --bin chat_cli
 ```
 
-Start web mode:
+with live reload:
 ```
-cargo run --bin chat_web
+./chatrs dev
 ```
