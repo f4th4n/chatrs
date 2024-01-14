@@ -5,3 +5,5 @@ members = [
 	"chat_cli",
 	"chat_web"
 ]
+
+default-member = ["chat_web"]

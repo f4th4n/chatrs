@@ -2,39 +2,26 @@ use dotenvy;
 use redis::Client;
 use redis::Commands;
 use redis::Connection;
+use std::error::Error;
 
 /*
 redis keys:
 GET user:abc
 */
 
-fn get_connection() -> Connection {
-  let redis_url = match dotenvy::var("REDIS_URL") {
-    Ok(url) => url,
-    _error => panic!("REDIS_URL is required"),
-  };
+type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
-  let client = match Client::open(redis_url) {
-    Ok(url) => url,
-    _error => panic!("Cannot connect to redis server"),
-  };
-
-  let conn = match client.get_connection() {
-    Ok(conn) => conn,
-    _error => panic!("Cannot get connection to redis server"),
-  };
-
-  conn
+fn get_connection() -> Result<Connection> {
+  let redis_url = dotenvy::var("REDIS_URL").expect("REDIS_URL is must");
+  let client = Client::open(redis_url)?;
+  let conn = client.get_connection()?;
+  Ok(conn)
 }
 
-//fn find_rooms() -> Vec<Room> {}
-pub fn find_rooms() -> String {
-  let mut con = get_connection();
-  let key = "chatrs".to_string();
-  let result: Option<String> = con.get(key).expect("Failed to get value from Redis");
-
-  match result {
-    Some(value) => value,
-    None => "not found".to_string(),
-  }
+pub fn find_rooms() -> Result<Vec<String>> {
+  let mut conn = get_connection()?;
+  //let result: Option<String> = conn.get("chatrs".to_string())?;
+  let list_name = "bikes:repairs".to_string();
+  let result: Vec<String> = conn.lrange(list_name, 0, -1).expect("failed to execute LRANGE for 'items'");
+  Ok(result)
 }

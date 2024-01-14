@@ -1,6 +1,9 @@
 if [ "$1" = "dev" ]; then
   cargo watch -x "run -p chat_web"
+elif [ "$1" = "dev_script" ]; then
+  cargo run --bin dev_script
 else
   echo "unknown command. available command:
-  ./chatrs dev"
+  ./chatrs dev
+  ./chatrs dev_script"
 fi
