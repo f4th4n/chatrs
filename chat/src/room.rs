@@ -4,7 +4,7 @@ use crate::message::Message;
 ///   where person_1 and person_2 is username, and it is always sorted ascending
 #[derive(PartialEq, Debug)]
 pub struct Room {
-  name: String,
+  pub name: String,
   messages: Vec<Message>,
 }
 

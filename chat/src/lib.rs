@@ -1,6 +1,8 @@
-mod message;
-mod room;
+pub mod message;
+pub mod room;
+pub mod user;
 
+/*
 use room::Room;
 
 pub fn create_room(name: String) -> Room {
@@ -11,3 +13,4 @@ pub fn send_message(room: &mut Room, from: String, message_body: String) -> () {
   room.add_message(from, message_body);
   ()
 }
+*/
