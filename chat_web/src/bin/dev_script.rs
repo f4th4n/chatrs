@@ -1,5 +1,4 @@
-use chat::room::Room;
-use chat::user::User;
+use chat_web::message_repo;
 use chat_web::user_repo;
 use dotenvy::dotenv;
 use std::error::Error;
@@ -7,14 +6,21 @@ use std::error::Error;
 fn main() -> Result<(), Box<dyn Error>> {
   dotenv().expect(".env file not found");
 
-  let user1 = User {
-    username: "wildan".to_string(),
-  };
-  let rooms_list = vec![Room::new("room1".to_string()), Room::new("room2".to_string())];
-  user_repo::set_rooms(&user1, rooms_list)?;
+  let mut room_1 = user_repo::new_room("room_1".to_string())?;
+  let room_2 = user_repo::new_room("room_2".to_string())?;
 
-  let rooms = user_repo::find_rooms(&user1)?;
-  println!("rooms {:?}", rooms);
+  let user_1 = user_repo::new_user("wildan".to_string(), "Wildan Fathan".to_string())?;
+  let user_2 = user_repo::new_user("kalinga".to_string(), "Kalingga Satria".to_string())?;
+
+  user_repo::assign_room(&room_1, &user_1)?;
+  user_repo::assign_room(&room_1, &user_2)?;
+  user_repo::assign_room(&room_2, &user_1)?;
+
+  let users_room_1 = user_repo::users_by_room(&room_1)?;
+  println!(".... {:?}", users_room_1);
+
+  let _ = message_repo::send(&user_1, &mut room_1, "hello".to_string())?;
+  let _ = message_repo::send(&user_1, &mut room_1, "world".to_string())?;
 
   Ok(())
 }

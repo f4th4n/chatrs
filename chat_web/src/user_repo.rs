@@ -13,6 +13,8 @@ GET user:abc
 
 type ResultBox<T> = Result<T, Box<dyn Error>>;
 
+static ROOM_PREFIX: &str = "chatrs:room:";
+
 fn get_connection() -> ResultBox<Connection> {
   let redis_url = dotenvy::var("REDIS_URL").expect("REDIS_URL is must");
   let client = Client::open(redis_url)?;
@@ -20,17 +22,47 @@ fn get_connection() -> ResultBox<Connection> {
   Ok(conn)
 }
 
-pub fn set_rooms(user: &User, rooms: Vec<Room>) -> ResultBox<()> {
-  let username = &user.username;
-  let rooms_name: Vec<_> = rooms.iter().map(|room| room.name.clone()).collect();
+pub fn new_room(room_name: String) -> ResultBox<Room> {
+  let room = Room::new(room_name);
   let mut conn = get_connection()?;
-  conn.del(username.clone())?;
-  conn.lpush(username.clone(), rooms_name)?;
+  conn.sadd("chatrs:rooms", vec![&room.name.clone()])?;
+  Ok(room)
+}
+
+pub fn new_user(username: String, name: String) -> ResultBox<User> {
+  let user = User {
+    username: username.clone(),
+    name: name.clone(),
+  };
+  let mut conn = get_connection()?;
+  conn.hset(user.username.clone(), "username".to_string(), username)?;
+  conn.hset(user.name.clone(), "name".to_string(), name)?;
+  Ok(user)
+}
+
+/// push user to room
+pub fn assign_room(room: &Room, user: &User) -> ResultBox<()> {
+  let mut conn = get_connection()?;
+  //let prefix: String = "chatrs:room:".to_owned();
+  let room_name: &String = &room.name.clone();
+  let key = format!("{ROOM_PREFIX}{room_name}");
+  println!("{}", key);
+
+  conn.sadd(key, vec![&user.username.clone()])?;
+
   Ok(())
+}
+
+pub fn users_by_room(room: &Room) -> ResultBox<Vec<String>> {
+  let mut conn = get_connection()?;
+  let room_name: &String = &room.name.clone();
+  let key = format!("{ROOM_PREFIX}{room_name}");
+  let result: Vec<_> = conn.smembers(key).expect("redis cmd err");
+  Ok(result)
 }
 
 pub fn find_rooms(user: &User) -> ResultBox<Vec<String>> {
   let mut conn = get_connection()?;
-  let result: Vec<_> = conn.lrange(user.username.clone(), 0, -1).expect("redis cmd err");
+  let result: Vec<_> = conn.smembers(user.username.clone()).expect("redis cmd err");
   Ok(result)
 }

@@ -11,6 +11,7 @@ chat = {path = "../chat"}
 rocket = "0.5.0"
 dotenvy = "0.15"
 redis = "0.24.0"
+serde_json = "1.0.111"
 
 [[bin]]
 name = "dev_script"
