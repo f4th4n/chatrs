@@ -1,6 +1,7 @@
 use chat::room::Room;
 use chat::user::User;
 use dotenvy;
+use log::info;
 use redis::Client;
 use redis::Commands;
 use redis::Connection;
@@ -26,6 +27,7 @@ pub fn new_room(room_name: String) -> ResultBox<Room> {
   let room = Room::new(room_name);
   let mut conn = get_connection()?;
   conn.sadd("chatrs:rooms", vec![&room.name.clone()])?;
+  info!("[room] new room `{}`", room.name.clone());
   Ok(room)
 }
 
@@ -35,8 +37,9 @@ pub fn new_user(username: String, name: String) -> ResultBox<User> {
     name: name.clone(),
   };
   let mut conn = get_connection()?;
-  conn.hset(user.username.clone(), "username".to_string(), username)?;
+  conn.hset(user.username.clone(), "username".to_string(), username.clone())?;
   conn.hset(user.name.clone(), "name".to_string(), name)?;
+  info!("[user] new user `{}`", username.clone());
   Ok(user)
 }
 

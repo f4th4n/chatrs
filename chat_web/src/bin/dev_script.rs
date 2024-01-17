@@ -1,3 +1,4 @@
+//use chat_web::broadcast;
 use chat_web::message_repo;
 use chat_web::user_repo;
 use dotenvy::dotenv;
@@ -22,6 +23,11 @@ fn main() -> Result<(), Box<dyn Error>> {
   let _ = message_repo::send(&user_1, &mut room_1, "hello".to_string())?;
   let _ = message_repo::send(&user_1, &mut room_1, "world".to_string())?;
   let _ = message_repo::send(&user_2, &mut room_1, "last but".to_string())?;
+
+  println!("\ninbox messages:");
+  room_1.messages.iter().for_each(|msg| println!("{:?}", msg));
+  //println!("{:?}", room_1.messages);
+  // TODO implement broadcast
 
   Ok(())
 }
