@@ -4,6 +4,7 @@ use dotenvy::dotenv;
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
+  env_logger::init();
   dotenv().expect(".env file not found");
 
   let mut room_1 = user_repo::new_room("room_1".to_string())?;
@@ -16,11 +17,11 @@ fn main() -> Result<(), Box<dyn Error>> {
   user_repo::assign_room(&room_1, &user_2)?;
   user_repo::assign_room(&room_2, &user_1)?;
 
-  let users_room_1 = user_repo::users_by_room(&room_1)?;
-  println!(".... {:?}", users_room_1);
+  let _ = user_repo::users_by_room(&room_1)?;
 
   let _ = message_repo::send(&user_1, &mut room_1, "hello".to_string())?;
   let _ = message_repo::send(&user_1, &mut room_1, "world".to_string())?;
+  let _ = message_repo::send(&user_2, &mut room_1, "last but".to_string())?;
 
   Ok(())
 }
