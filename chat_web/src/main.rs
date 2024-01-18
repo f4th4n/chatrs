@@ -22,9 +22,9 @@ fn rocket() -> _ {
   rocket::build().register("/", catchers![unsupported_media]).mount(
     "/",
     routes![
-      index,                       // /
-      rooms_handler::list_rooms,   // GET /rooms
-      rooms_handler::create_rooms, // POST /rooms
+      index,                      // /
+      rooms_handler::list_rooms,  // GET /rooms
+      rooms_handler::create_room, // POST /rooms
     ],
   )
 }
