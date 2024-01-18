@@ -1,4 +1,6 @@
 use crate::message::Message;
+use rocket::FromForm;
+use rocket::Responder;
 use serde::{Deserialize, Serialize};
 
 /// rules: message name for 2 persons will be 'private:person_1:person_2'
@@ -7,6 +9,12 @@ use serde::{Deserialize, Serialize};
 pub struct Room {
   pub name: String,
   pub messages: Vec<Message>,
+}
+
+#[derive(Debug, FromForm, Responder)]
+#[response(status = 200, content_type = "json")]
+pub struct RoomForm {
+  pub name: String,
 }
 
 impl Room {

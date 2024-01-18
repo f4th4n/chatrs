@@ -46,7 +46,6 @@ pub fn new_user(username: String, name: String) -> ResultBox<User> {
 /// push user to room
 pub fn assign_room(room: &Room, user: &User) -> ResultBox<()> {
   let mut conn = get_connection()?;
-  //let prefix: String = "chatrs:room:".to_owned();
   let room_name: &String = &room.name.clone();
   let key = format!("{ROOM_PREFIX}{room_name}");
 
