@@ -10,8 +10,22 @@ type ResultBox<T> = Result<T, Box<dyn Error>>;
 
 #[get("/rooms")]
 pub fn list_rooms() -> String {
-  //let _room = user_repo::find_rooms();
-  "room".to_string()
+  "not implemented".to_string()
+}
+
+#[post("/rooms", data = "<room_form>")]
+pub fn create_room(headers: Headers, room_form: Form<RoomForm>) -> String {
+  let room_name = room_form.name.clone();
+  let token = headers.token.clone();
+  let username = token.replace("Bearer ", "");
+
+  match exec_create_room(room_name, username) {
+    Ok(_) => "ok".to_string(),
+    Err(err) => {
+      error!("[req] error: {}", err);
+      "err".to_string()
+    }
+  }
 }
 
 fn exec_create_room(room_name: String, username: String) -> ResultBox<()> {
@@ -20,17 +34,4 @@ fn exec_create_room(room_name: String, username: String) -> ResultBox<()> {
 
   user_repo::assign_room(&room, &user)?;
   Ok(())
-}
-
-#[post("/rooms", data = "<room_form>")]
-pub fn create_room(headers: Headers, room_form: Form<RoomForm>) -> String {
-  let room_name = room_form.name.clone();
-  let username = headers.token.clone();
-  match exec_create_room(room_name, username) {
-    Ok(_) => "ok".to_string(),
-    Err(err) => {
-      error!("[req] error: {}", err);
-      "err".to_string()
-    }
-  }
 }
